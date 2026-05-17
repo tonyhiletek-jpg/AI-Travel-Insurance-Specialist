@@ -56,9 +56,3 @@
 
 ---
 
-## 🚀 快速開始 (Quick Start)
-
-### 1. 複製本倉庫
-```bash
-git clone [https://github.com/your-username/your-repo-name.git](https://github.com/your-username/your-repo-name.git)
-cd your-repo-name
