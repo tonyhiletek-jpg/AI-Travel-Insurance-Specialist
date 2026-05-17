@@ -1,32 +1,64 @@
-# AI-Travel-Insurance-Specialist
-📖 專案背景與目標**  
-在投保海外旅平險時，使用者常面臨長達數十頁的 PDF 條款，內含艱澀的法律術語與複雜的理賠邏輯。本專案旨在開發一個 AI 旅平險專員，透過 RAG (Retrieval-Augmented Generation) 架構，讓使用者能以自然語言提問，並獲得準確、即時且具備法條依據的解答。  
+# 🤖 AI 旅平險專員：智慧化旅遊平安險文件檢索系統 (RAG-based Insurance Specialist)
 
-**🛠️ AI 工具鏈與系統環境 (Toolchain & Environment)**  
-本專案採用全棧 AI 鏈結與 Orchestration 能力建置，使用以下核心技術：  
-開發環境：Google Colab (py 3.10)  
-LLM 模型：Google Gemini API (具備動態模型探索機制，自動配對支援 generateContent 的 gemini-pro 或 **gemini-1.5-flash** 模型)    
-檢索與框架：LangChain    
-向量嵌入 (Embedding)：HuggingFace (shibing624/text2vec-base-chinese)  
-向量資料庫 (Vector DB)：ChromaDB (本地端持久化儲存)  
-資料前處理：正規化純文字檔 (旅平險保單合訂本 .txt) 搭配 Regex 正則表達式分塊。  
+[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/)
+[![Framework-LangChain](https://img.shields.io/badge/Framework-LangChain-green.svg)](https://github.com/langchain-ai/langchain)
+[![LLM-Gemini_Flash](https://img.shields.io/badge/LLM-Gemini_Flash_1.5-orange.svg)](https://deepmind.google/technologies/gemini/)
 
-**RAG 核心參數須知 (finally.ipynb)**  
-文字切片策略 (Text Splitting)：  
-Chunk Size: 600 - 800 字（適用於法規條文）。  
-Chunk Overlap: 10% - 15%（防止關鍵金額與條件被強行切分）。  
-檢索權重 (Retrieval)：  
-Top-K: 設定為 4，以獲取包含定義、範圍與除外責任的完整資訊。  
-模型行為控制：  
-Temperature: 0.0（確保輸出嚴謹且具一致性）。  
-Prompt: 限制模型僅依據文本回答，嚴禁產生虛構的理賠規則。  
+本專案為**生成式 AI 期末分組報告**之研究成果。我們建立了一個專門針對「旅遊平安險」的文件檢索系統（RAG），旨在讓使用者在投保前能徹底了解條款疑慮。系統定位為**「專屬 AI 保險專員」**，提供精確且具備法規實證的解答，有效避免保險理賠爭議。
 
-**環境與安全性須知**
-API 金鑰：請使用 os.environ 讀取金鑰，嚴禁將 API Key 直接寫在代碼中上傳至版本控制系統。  
-Rate Limiting：使用免費版 Gemini API Key 時，需在大量數據向量化過程中加入適當延遲 (Sleep)，避免觸發頻率限制。  
+---
 
-**🛠️操作與對話須知 (Usage Instructions)**  
-啟動成功後，畫面會出現 👤 你的問題： 的輸入框。    
-輸入你想詢問的旅平險情境（例如：「班機延誤了 5 小時怎麼賠？」或「只有一人食物中毒有賠嗎？」）。    
-系統檢索後，會給出嚴格防幻覺的專業回答，並在底部印出**「📚 本次回答參考的唯一底層文獻」**。  
-若要結束系統，請在輸入框輸入 q、quit 或 退出。  
+## 🎯 系統核心亮點
+- **100% 可溯源性**：拋棄傳統固定字數切塊（Fixed-size Chunking），改用**語意結構切塊**，精準追蹤至「第 X 條」。
+- **嚴謹的邊界控制**：透過精準提示詞工程，徹底**消除通識污染（General Knowledge Contamination）**，拒絕給出似是而非的通識回答。
+- **高效本地向量推理**：結合開源中文 Embedding 模型與 NVIDIA T4 GPU 算力，保障高水準的中文語意檢索表現。
+
+---
+
+## 📂 系統環境與開發工具 (Environment & IDE)
+為了符合評分標準與執行紀錄要求，本系統之建置環境如下：
+* **執行平台**：Google Colab
+* **算力資源**：NVIDIA T4 GPU（用於本地端 HuggingFace Embedding 模型推理加速）
+* **輔助 IDE**：Jupyter Notebook（用於主要開發、測試、視覺化 DataFrame 與驗證檢索結果）
+
+---
+
+## 🛠️ AI 工具鏈整合與技術棧 (Tech Stack)
+本專案透過 **AI Orchestration (AI 編排)** 能力，串聯了以下前沿開源與雲端工具：
+
+| 組件 | 技術/工具 | 說明 |
+| :--- | :--- | :--- |
+| **語言模型 (LLM)** | Google Generative AI | 使用 **Gemini Flash 1.5**，負責最終的語意理解與對話生成。 |
+| **編排框架** | LangChain | 整合 `langchain_core` 與 `langchain_google_genai`，串接資料流、向量庫與 LLM。 |
+| **語意向量 (Embedding)** | HuggingFace | 採用開源 **`shibing624/text2vec-base-chinese`**，將中文條款轉換為精確向量。 |
+| **向量資料庫** | ChromaDB | 高效儲存與檢索 **336 筆** 精準切分之保單條款區塊。 |
+| **文件解析工具** | pdfplumber + re | 搭配 Python 正規表達式（Regular Expression）進行文本抽取與進階清洗。 |
+
+---
+
+## ⚙️ 系統完整設計流程 (System Design Flow)
+
+### 📌 A. 資料收集 (Data Collection)
+* **資料來源**：國泰產物旅平險保單條款、南山產物旅平險保單條款。
+* **資料清洗**：過濾原始 PDF 中「樣張」字樣的浮水印與雜訊，並修正非結構化文本中常見的斷行與換行錯誤。
+
+### 📌 B. 系統建置 (System Build)
+1. **精準分塊 (Chunking Strategy)**：
+   為解決法律/保險術語的複雜度與結構完整性，本系統捨棄固定字數裁切，改用 `re.split` 依**「第 X 條」**標題進行條文切塊。同時，將「保險公司名稱」與「條款標題」作為 **Metadata** 綁定於每個區塊，確保回答時 100% 可溯源。
+2. **提示詞工程 (Prompt Engineering)**：
+   設計嚴格的限制性提示詞，強制 AI 必須完全基於參考資料回答。若檢索範圍內無答案，則需誠實回報「無法得知」。系統設定抓取最相關的 8 個條文區塊 ($k=8$) 來應對複雜的交叉條款查詢。
+
+### 📌 C. 驗證與對比分析 (Validation & Analysis)
+我們將本系統（RAG）與前沿通用 AI（如 Perplexity）進行了基準測試與對比分析：
+
+* **消除通識污染**：在測試「燒燙傷定額給付」時，Perplexity 會產生「看似專業的通識覆蓋」，誤稱南山產物有相同理賠；而本系統 (RAG) 能精確回報南山條款未提及該項目，展現了嚴謹的邊界控制。
+* **正確性優先**：通用 AI 傾向使用機率性詞彙（如「多半會認定」、「通常會理賠」），而本系統能直接提供如 **`[南山] - 第二十五條`** 等精確出處，能有效避免實務上的理賠爭議。
+
+---
+
+## 🚀 快速開始 (Quick Start)
+
+### 1. 複製本倉庫
+```bash
+git clone [https://github.com/your-username/your-repo-name.git](https://github.com/your-username/your-repo-name.git)
+cd your-repo-name
